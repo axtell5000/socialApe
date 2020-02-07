@@ -24,6 +24,9 @@ const app = express();
 // Initializing firebase, so we can use firebase authorization
 firebase.initializeApp(firebaseConfig);
 
+// Constant
+const DB = admin.firestore();
+
 
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
@@ -42,38 +45,68 @@ app.post('/signup', (req, res) => {
 		handle: req.body.handle
 	};
 
-	// todo - validate
+	// validate data
+	let token, userId;
 
-	firebase.auth().createUserWithEmailAndPassword(newUser.email, newUser.password)
-		.then(data => {
-			return res.status(201).json({message: `user ${data.user.uid} signed up successfully`})
+	DB.doc(`/users/${newUser.handle}`).get()
+		.then(doc => {
+			if (doc.exists) {
+				return res.status(400).json({handle: 'This handle is already taken'})
+			} else {
+				return firebase.auth().createUserWithEmailAndPassword(newUser.email, newUser.password);
+			}
 		})
-		.catch((err) => {
+		.then(data => {
+			userId = data.user.uid;
+			return data.user.getIdToken();
+		})
+		.then(idToken => {
+			token = idToken;
+			const userCredentials = {
+				handle: newUser.handle,
+				email: newUser.email,
+				createdAt: new Date().toISOString(),
+				userId
+			};
+
+			return DB.doc(`/users/${newUser.handle}`).set(userCredentials);
+		})
+		.then(() => {
+			return res.status(201).json({ token });
+		})
+		.catch(err => {
 			console.error(err);
-			return res.status(500).json({ error: err.code});
-		});
+			if (err.code === 'auth/email-already-in-use') {
+				return res.status(400).json({email: 'Email is already in use'})
+			} else {
+				return res.status(500).json({ error: err.code});
+			}
+			
+		})
+
+
 });
 
 
 // Get screams route
 app.get('/screams', (req, res) => {
-	admin.firestore()
-	.collection('screams')
-	.orderBy('createdAt', 'desc')
-	.get()
-	.then(data => {
-		let screams = [];
-		data.forEach(doc => {
-			screams.push({
-				screamId: doc.id,
-				body: doc.data().body,
-				userHandle: doc.data().userHandle,
-				createdAt: doc.data().createdAt
+	DB
+		.collection('screams')
+		.orderBy('createdAt', 'desc')
+		.get()
+		.then(data => {
+			let screams = [];
+			data.forEach(doc => {
+				screams.push({
+					screamId: doc.id,
+					body: doc.data().body,
+					userHandle: doc.data().userHandle,
+					createdAt: doc.data().createdAt
+				});
 			});
-		});
 		
-		return res.json(screams);
-	})
+			return res.json(screams);
+		})
 	.catch(err => console.log(err));
 });
 
@@ -84,11 +117,9 @@ app.post('/scream', (req, res) => {
 		body: req.body.body,
 		userHandle: req.body.userHandle,
 		createdAt: new Date().toISOString()
-	};
+	};	
 
-	
-
-	admin.firestore()
+	DB
 		.collection('screams')
 		.add(newScream)
 		.then(doc => {
