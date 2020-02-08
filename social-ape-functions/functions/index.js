@@ -36,7 +36,23 @@ const DB = admin.firestore();
 We can find them in the firebase dashboad. We needed to run firebase deploy to put them in firebase*/
 /* Now using express instead */
 
-// Signup route
+/* isEmpty helper function */
+const isEmpty = (string) => {
+	if (string.trim() === '') return true;
+	else return false;
+}
+
+/* Checking if valid email helper function  */
+const isEmail = (email) => {
+	const emailRegEx = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+	if (email.match(emailRegEx)) return true;
+	else return false;
+}
+
+
+/*------------------------------------------------------------------------------------------------------------------------------
+																										SIGNUP ROUTE
+-------------------------------------------------------------------------------------------------------------------------------*/
 app.post('/signup', (req, res) => {
 	const newUser = {
 		email: req.body.email,
@@ -44,6 +60,23 @@ app.post('/signup', (req, res) => {
 		confirmPasword: req.body.confirmPasword,
 		handle: req.body.handle
 	};
+
+	/*---------------------------- validating input------------------------------ */
+	let errors = {}; // to be use to construct a list of errors
+
+	if (isEmpty(newUser.email)) {
+		errors.email = 'Must not be empty';
+	} else if (!isEmail(newUser.email)) {
+		errors.email = 'Must be a valid email address';
+	}
+
+	// Checking various fields
+	if (isEmpty(newUser.password)) errors.password = 'Must not be empty';
+	if (newUser.password !== newUser.confirmPasword) errors.confirmPassword = 'Passwords must match';
+	if (isEmpty(newUser.handle)) errors.handle = 'Must not be empty';
+
+	// if legth greater than 0 means there are errors
+	if (Object.keys(errors).length > 0) return res.status(400).json(errors);
 
 	// validate data
 	let token, userId;
@@ -87,8 +120,9 @@ app.post('/signup', (req, res) => {
 
 });
 
-
-// Get screams route
+/*------------------------------------------------------------------------------------------------------------------------------
+																									GET SCREAMS ROUTE
+-------------------------------------------------------------------------------------------------------------------------------*/
 app.get('/screams', (req, res) => {
 	DB
 		.collection('screams')
@@ -110,7 +144,10 @@ app.get('/screams', (req, res) => {
 	.catch(err => console.log(err));
 });
 
-// Add a scream route
+/*------------------------------------------------------------------------------------------------------------------------------
+																									ADD A SCREAEM ROUTE
+-------------------------------------------------------------------------------------------------------------------------------*/
+
 app.post('/scream', (req, res) => {
 
 	const newScream = {
