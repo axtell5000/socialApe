@@ -1,7 +1,7 @@
 const { admin, DB } = require('./admin');
 
 module.exports = (req, res, next) => {
-	
+	console.log(req.headers, 'HEADERS');
 	let idToken;
 	if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
 		idToken = req.headers.authorization.split('Bearer ')[1];
@@ -21,7 +21,7 @@ module.exports = (req, res, next) => {
 		})
 		.then(data => {
 			req.user.handle = data.docs[0].data().handle;
-			console.log(req.user.handle, 'shizzle');
+			
 			return next();
 		})
 		.catch(err => {

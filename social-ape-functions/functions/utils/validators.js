@@ -12,6 +12,7 @@ const isEmail = (email) => {
 };
 
 exports.validateSignupData = (data) => {
+	
 	/*---------------------------- validating input------------------------------ */
 	let errors = {}; // to be use to construct a list of errors
 
@@ -20,7 +21,7 @@ exports.validateSignupData = (data) => {
 	} else if (!isEmail(data.email)) {
 		errors.email = 'Must be a valid email address';
 	}
-
+	
 	// Checking various fields
 	if (isEmpty(data.password)) errors.password = 'Must not be empty';
 	if (data.password !== data.confirmPasword) errors.confirmPassword = 'Passwords must match';
