@@ -2,12 +2,14 @@ const firebase = require('firebase');
 
 const config = require('../utils/config');
 const { DB, admin } = require('../utils/admin');
-const { validateSignupData, validateLoginData } = require('../utils/validators');
+const { validateSignupData, validateLoginData, reduceUserDetails } = require('../utils/validators');
 
 
 // Initializing firebase, so we can use firebase authorization
 firebase.initializeApp(config);
 
+
+// to signup user
 exports.signup = (req, res) => {
 	const newUser = {
 		email: req.body.email,
@@ -64,6 +66,7 @@ exports.signup = (req, res) => {
 		
 };
 
+// for logging  in user
 exports.login = (req, res) => {
 	const user = {
 		email: req.body.email,
@@ -94,6 +97,21 @@ exports.login = (req, res) => {
 		});
 };
 
+// route for adding user details
+exports.addUserDetails = (req, res) => {
+	let userDetails = reduceUserDetails(req.body);
+
+	DB.doc(`/users/${req.user.handle}`).update(userDetails)
+		.then(() => {
+			return res.json({message: 'Details added successfully'});
+		})
+		.catch(err => {
+			console.error(err);
+			return res.status(500).json({ error: err.code });
+		});
+};
+
+// route for uploading profile image for user
 exports.uploadImage = (req, res) => {
 	const BusBoy = require('busboy');
 	const path = require('path');
