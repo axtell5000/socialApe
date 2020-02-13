@@ -50,19 +50,17 @@ exports.validateLoginData = (data) => {
 };
 
 exports.reduceUserDetails = (data) => {
+	console.log(data, 'Yowzer');
 	let userDetails = {};
 
-	if (!isEmpty(data.bio.trim())) userDetails.bio = dat.bio;
-
+	if (!isEmpty(data.bio.trim())) userDetails.bio = data.bio;
 	if (!isEmpty(data.website.trim())) {
-		if (data.website.trim().substring(0, 4) !== 'http') {
-			userDetails.website = `http://${data.website.trim()}`;
-		} else {
-			userDetails.website = data.website
-		}
+			// https://website.com
+			if (data.website.trim().substring(0, 4) !== 'http') {
+					userDetails.website = `http://${data.website.trim()}`;
+			} else userDetails.website = data.website;
 	}
-
-	if (!isEmpty(data.location.trim())) userDetails.location = dat.location;
+	if (!isEmpty(data.location.trim())) userDetails.location = data.location;
 
 	return userDetails;
 };
