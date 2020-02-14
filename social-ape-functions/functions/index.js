@@ -2,8 +2,22 @@ const functions = require('firebase-functions');
 const express = require('express');
 
 const  FBAuth  = require('./utils/fbAuth');
-const { getAllScreams, postOneScream, getScream, commentOnScream } = require('./handlers/screams');
-const { login, signup, uploadImage, addUserDetails, getAuthenticatedUser } = require('./handlers/users');
+const { 
+	getAllScreams, 
+	postOneScream, 
+	getScream, 
+	commentOnScream, 
+	likeScream, 
+	unlikeScream,
+	deleteScream } = require('./handlers/screams');
+
+const { 
+	login, 
+	signup, 
+	uploadImage, 
+	addUserDetails, 
+	getAuthenticatedUser } = require('./handlers/users');
+	
 //const DB = require('./utils/admin');
 
 // using app
@@ -44,9 +58,10 @@ app.get('/screams/:screamId', getScream);
 // comment on a particular scream
 app.post('/scream/:screamId/comment', FBAuth, commentOnScream);
 
+// like / unlike scream
+app.get('/scream/:screamId/like', FBAuth, likeScream);
+app.get('/scream/:screamId/unlike', FBAuth, unlikeScream);
 
-/*------------------------------------------------------------------------------------------------------------------------------
-																									ADD A SCREAEM ROUTE
--------------------------------------------------------------------------------------------------------------------------------*/
+app.delete('/scream/:screamId', FBAuth, deleteScream);
 
 exports.api = functions.region('europe-west1').https.onRequest(app); // registering app with routes
