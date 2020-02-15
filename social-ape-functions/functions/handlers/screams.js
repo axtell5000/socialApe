@@ -29,7 +29,7 @@ exports.getAllScreams = (req, res) => {
 
 // Add one new scream
 exports.postOneScream = (req, res) => {
-
+  
 	if (req.body.body.trim() === '') {
     return res.status(400).json({ body: 'Body must not be empty' });
 	}
@@ -52,8 +52,9 @@ exports.postOneScream = (req, res) => {
 			return res.json(resScream);
 		})
 		.catch(err => {
+      console.error(err);
 			res.status(500).json({ error: 'something went wrong'});
-			console.error(err);
+			
 		});
 };
 

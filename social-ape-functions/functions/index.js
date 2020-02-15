@@ -1,7 +1,10 @@
 const functions = require('firebase-functions');
 const express = require('express');
 
+
+const { DB } = require('./utils/admin');
 const  FBAuth  = require('./utils/fbAuth');
+
 const { 
 	getAllScreams, 
 	postOneScream, 
@@ -17,7 +20,7 @@ const {
 	uploadImage, 
 	addUserDetails, 
 	getAuthenticatedUser } = require('./handlers/users');
-	
+
 //const DB = require('./utils/admin');
 
 // using app
@@ -65,3 +68,67 @@ app.get('/scream/:screamId/unlike', FBAuth, unlikeScream);
 app.delete('/scream/:screamId', FBAuth, deleteScream);
 
 exports.api = functions.region('europe-west1').https.onRequest(app); // registering app with routes
+
+/*------------------------Notification-----------------------------*/
+/* Here we are leveraging Firebase's built in events that gets fired when changes are done on the database
+For example onCreate is one */
+
+exports.createNotificationOnLike = functions
+  .region('europe-west1')
+  .firestore.document('likes/{id}')
+  .onCreate((snapshot) => {
+    return DB
+      .doc(`/screams/${snapshot.data().screamId}`)
+      .get()
+      .then((doc) => {
+        if (doc.exists && doc.data().userHandle !== snapshot.data().userHandle) {
+          return DB.doc(`/notifications/${snapshot.id}`).set({
+            createdAt: new Date().toISOString(),
+            recipient: doc.data().userHandle,
+            sender: snapshot.data().userHandle,
+            type: 'like',
+            read: false,
+            screamId: doc.id
+          });
+        }
+      })
+      .catch((err) => console.error(err));
+	});
+
+	exports.createNotificationOnComment = functions
+  .region('europe-west1')
+  .firestore.document('comments/{id}')
+  .onCreate((snapshot) => {
+    return DB
+      .doc(`/screams/${snapshot.data().screamId}`)
+      .get()
+      .then((doc) => {
+        if (doc.exists && doc.data().userHandle !== snapshot.data().userHandle) {
+          return DB.doc(`/notifications/${snapshot.id}`).set({
+            createdAt: new Date().toISOString(),
+            recipient: doc.data().userHandle,
+            sender: snapshot.data().userHandle,
+            type: 'comment',
+            read: false,
+            screamId: doc.id
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        return;
+      });
+  });
+	
+	exports.deleteNotificationOnUnLike = functions
+  .region('europe-west1')
+  .firestore.document('likes/{id}')
+  .onDelete((snapshot) => {
+    return DB
+      .doc(`/notifications/${snapshot.id}`)
+      .delete()
+      .catch((err) => {
+        console.error(err);
+        return;
+      });
+  });
