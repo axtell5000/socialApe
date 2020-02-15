@@ -19,7 +19,10 @@ const {
 	signup, 
 	uploadImage, 
 	addUserDetails, 
-	getAuthenticatedUser } = require('./handlers/users');
+  getAuthenticatedUser,
+  getUserDetails,
+  markNotificationsRead
+ } = require('./handlers/users');
 
 //const DB = require('./utils/admin');
 
@@ -45,6 +48,8 @@ app.post('/login', login);
 app.post('/user/image', FBAuth, uploadImage);
 app.post('/user', FBAuth, addUserDetails);
 app.get('/users', FBAuth, getAuthenticatedUser);
+app.get('/user/:handle', getUserDetails);
+app.post('/notifications', FBAuth, markNotificationsRead);
 
 
 /*------------------------------------------------------------------------------------------------------------------------------
