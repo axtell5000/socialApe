@@ -1,7 +1,6 @@
 const functions = require('firebase-functions');
 const express = require('express');
 
-
 const { DB } = require('./utils/admin');
 const  FBAuth  = require('./utils/fbAuth');
 
