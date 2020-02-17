@@ -147,7 +147,7 @@ exports.createNotificationOnLike = functions
     console.log(change.after.data());
     if (change.before.data().imageUrl !== change.after.data().imageUrl) {
       console.log('image has changed');
-      const batch = DB.batch(); // batch is to write multiple doc at one go, needs a commit() to send them
+      const batch = DB.batch(); // batch is to write multiple doc at one go (one after the other), needs a commit() to send them to db
       return DB
         .collection('screams')
         .where('userHandle', '==', change.before.data().handle)
@@ -160,4 +160,41 @@ exports.createNotificationOnLike = functions
           return batch.commit();
         });
     } else return true;
+  });
+
+  exports.onScreamDelete = functions
+  .region('europe-west1')
+  .firestore.document('/screams/{screamId}')
+  .onDelete((snapshot, context) => {
+    const screamId = context.params.screamId;
+    const batch = DB.batch();
+    return DB
+      .collection('comments')
+      .where('screamId', '==', screamId)
+      .get()
+      .then((data) => {
+        data.forEach((doc) => {
+          batch.delete(DB.doc(`/comments/${doc.id}`));
+        });
+        return DB
+          .collection('likes')
+          .where('screamId', '==', screamId)
+          .get();
+      })
+      .then((data) => {
+        data.forEach((doc) => {
+          batch.delete(DB.doc(`/likes/${doc.id}`));
+        });
+        return DB
+          .collection('notifications')
+          .where('screamId', '==', screamId)
+          .get();
+      })
+      .then((data) => {
+        data.forEach((doc) => {
+          batch.delete(DB.doc(`/notifications/${doc.id}`));
+        });
+        return batch.commit();
+      })
+      .catch((err) => console.error(err));
   });
