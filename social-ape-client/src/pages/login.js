@@ -3,7 +3,6 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import PropTypes from 'prop-types';
 import AppIcon from '../images/icon.png';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 
 // Material ui stuff
 import Grid from '@material-ui/core/Grid';
@@ -11,6 +10,10 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
+
+// Redux
+import { connect } from 'react-redux';
+import { loginUser } from '../redux/actions/userActions';
 
 const styles = (theme) => ({
   ...theme.spreadThis
@@ -21,8 +24,7 @@ class Login extends Component {
     super();
     this.state = {
       email: '',
-			password: '',
-			loading: false,
+			password: '',		
       errors: {}
     };
 	}
@@ -35,31 +37,13 @@ class Login extends Component {
 	
   handleSubmit = (event) => {
     event.preventDefault();
-    this.setState({
-      loading: true
-    });
 
     const userData = {
       email: this.state.email,
       password: this.state.password
     };
 
-    axios.post('/login', userData)
-      .then(res => {
-        console.log(res.data);
-        localStorage.setItem('FBIdToken', `Bearer ${res.data.token}`);
-        this.setState({
-          loading: false
-        });
-        this.props.history.push('/')
-
-      })
-      .catch(err => {
-        this.setState({
-          errors: err.response.data,
-          loading: false
-        });
-      });
+    this.props.loginUser(userData, this.props.history);
 	};
 	
   handleChange = (event) => {
@@ -71,10 +55,11 @@ class Login extends Component {
   render() {
 
     const {
-      classes
+      classes,
+      UI: { loading }
 		} = this.props;
 		
-    const { errors, loading } = this.state;
+    const { errors } = this.state;
 
     return (
       <Grid container className={classes.form}>
@@ -127,7 +112,7 @@ class Login extends Component {
             </Button>
             <br />
             <small>
-              dont have an account ? sign up <Link to="/signup">here</Link>
+              dont have an account ? sign up <Link to="/signup" title="Signup here">here</Link>
             </small>
           </form>
         </Grid>
@@ -138,7 +123,19 @@ class Login extends Component {
 }
 
 Login.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  loginUser: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
+  UI: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(Login);
+const mapStateToProps = (state) => ({
+  user: state.user,
+  UI: state.UI
+});
+
+const mapActionsToProps = {
+  loginUser
+};
+
+export default connect(mapStateToProps, mapActionsToProps)(withStyles(styles)(Login));
