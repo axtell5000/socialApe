@@ -8,5 +8,11 @@ module.exports = function(app) {
       target: 'https://europe-west1-socialape-89327.cloudfunctions.net/api',
       changeOrigin: true
     })
-  );  
+  );
+  app.use(    
+    proxy('/login', { 
+      target: 'https://europe-west1-socialape-89327.cloudfunctions.net/api',
+      changeOrigin: true
+    })
+  );    
 }
