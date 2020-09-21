@@ -20,6 +20,7 @@ const DB = admin.firestore();
 
 firebase.initializeApp(config);
 
+// fetching screams route
 app.get("/screams", (req, res) => {
   DB.collection("screams")
     .orderBy("createdAt", "desc")
@@ -39,6 +40,7 @@ app.get("/screams", (req, res) => {
     .catch((err) => console.error(err));
 });
 
+// creating a scream route
 app.post("/scream", (req, res) => {
   const newScream = {
     body: req.body.body,
@@ -61,6 +63,22 @@ app.post("/scream", (req, res) => {
     });
 });
 
+// START WITH VALIDATION
+
+const isEmail = (email) => {
+  const regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  if (email.match(regEx)) return true;
+  else return false;
+};
+
+const isEmpty = (string) => {
+  if (string.trim() === "") {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 // Signup route
 app.post("/signup", (req, res) => {
   const newUser = {
@@ -70,7 +88,24 @@ app.post("/signup", (req, res) => {
     handle: req.body.handle,
   };
 
-  // TODO - validate
+  let errors = {};
+
+  if (isEmpty(newUser.email)) {
+    errors.email = "Must not be empty";
+  } else if (!isEmail(newUser.email)) {
+    errors.email = "Must be a valid email address";
+  }
+
+  if (isEmpty(newUser.password)) errors.password = "Must not be empty";
+
+  if (newUser.password !== newUser.confirmPassword)
+    errors.confirmPassword = "Passwords must match";
+  if (isEmpty(newUser.handle)) errors.handle = "Must not be empty";
+
+  // checking if there are actual errors
+  if (Object.keys(errors).length > 0) {
+    return res.status(400).json(errors);
+  }
 
   // Here we are checking if userhandle exist in database, cant have user with same handle
   // if handle doesnt exist user can be created
@@ -117,4 +152,49 @@ app.post("/signup", (req, res) => {
       }
     });
 });
+
+// login route
+app.post("/login", (req, res) => {
+  const user = {
+    email: req.body.email,
+    password: req.body.password,
+  };
+
+  let errors = {};
+
+  if (isEmpty(user.email)) {
+    errors.email = "Must not be empty";
+  } else if (!isEmail(user.email)) {
+    errors.email = "Must be a valid email address";
+  }
+
+  if (isEmpty(user.password)) errors.password = "Must not be empty";
+
+  if (Object.keys(errors).length > 0) {
+    return res.status(400).json(errors);
+  }
+
+  firebase
+    .auth()
+    .signInWithEmailAndPassword(user.email, user.password)
+    .then((data) => {
+      return data.user.getIdToken();
+    })
+    .then((token) => {
+      return res.json({ token });
+    })
+    .catch((err) => {
+      console.error(err);
+      if (err.code === "auth/wrong password") {
+        return res
+          .status(403)
+          .json({ general: "Wrong login details, please try again" });
+      } else {
+        return res.status(500).json({
+          error: err.code,
+        });
+      }
+    });
+});
+
 exports.api = functions.region("europe-west1").https.onRequest(app); // able to export multiple routes under /api, plus changing region to europe
