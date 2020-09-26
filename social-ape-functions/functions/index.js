@@ -8,7 +8,9 @@ const {
 const {
   signup,
   login,
-  uploadImage
+  uploadImage,
+  addUserDetails,
+  getAuthenticatedUser
 } = require('./handlers/users');
 const fbAuth = require('./util/fbAuth');
 
@@ -28,5 +30,10 @@ app.post("/login", login);
 
 // upload user image route
 app.post('/user/image', fbAuth, uploadImage);
+
+// adding user details route
+app.post('/user', fbAuth, addUserDetails);
+
+app.get('/user', fbAuth, getAuthenticatedUser);
 
 exports.api = functions.region("europe-west1").https.onRequest(app); // able to export multiple routes under /api, plus changing region to europe
