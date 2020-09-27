@@ -5,7 +5,10 @@ const {
   getAllScreams,
   postOneScream,
   getScream,
-  commentOnScream
+  commentOnScream,
+  likeScream,
+  unlikeScream,
+  deleteScream
 } = require('./handlers/screams');
 const {
   signup,
@@ -24,8 +27,10 @@ app.get("/screams", getAllScreams);
 // creating a scream route for 1 scream and protecting route with middleware
 app.post("/scream", fbAuth, postOneScream);
 app.get('/scream/:screamId', getScream);
-app.post('/creams/:screamId/comment', fbAuth, commentOnScream)
-
+app.post('/scream/:screamId/comment', fbAuth, commentOnScream);
+app.get('/scream/:screamId/like', fbAuth, likeScream);
+app.get('/scream/:screamId/unlike', fbAuth, unlikeScream);
+app.delete('/scream/:screamId', fbAuth, deleteScream);
 // User signup route
 app.post("/signup", signup);
 
