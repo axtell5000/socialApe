@@ -3,7 +3,9 @@ const express = require("express");
 
 const {
   getAllScreams,
-  postOneScream
+  postOneScream,
+  getScream,
+  commentOnScream
 } = require('./handlers/screams');
 const {
   signup,
@@ -21,6 +23,8 @@ app.get("/screams", getAllScreams);
 
 // creating a scream route for 1 scream and protecting route with middleware
 app.post("/scream", fbAuth, postOneScream);
+app.get('/scream/:screamId', getScream);
+app.post('/creams/:screamId/comment', fbAuth, commentOnScream)
 
 // User signup route
 app.post("/signup", signup);
