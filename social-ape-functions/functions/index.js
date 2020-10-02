@@ -1,5 +1,6 @@
 const functions = require("firebase-functions");
 const express = require("express");
+const cors = require("cors");
 
 const {
   getAllScreams,
@@ -17,15 +18,14 @@ const {
   addUserDetails,
   getAuthenticatedUser,
   getUserDetails,
-  markNotificationsRead
+  markNotificationsRead,
 } = require("./handlers/users");
 const fbAuth = require("./util/fbAuth");
 
-const {
-  DB
-} = require("./util/admin");
+const { DB } = require("./util/admin");
 
 const app = express();
+app.use(cors());
 
 // fetching screams route
 app.get("/screams", getAllScreams);
@@ -51,8 +51,8 @@ app.post("/user", fbAuth, addUserDetails);
 
 app.get("/user", fbAuth, getAuthenticatedUser);
 
-app.get('/user/:handle', getUserDetails);
-app.post('/notifications', fbAuth, markNotificationsRead);
+app.get("/user/:handle", getUserDetails);
+app.post("/notifications", fbAuth, markNotificationsRead);
 
 exports.api = functions.region("europe-west1").https.onRequest(app); // able to export multiple routes under /api, plus changing region to europe
 
@@ -124,23 +124,22 @@ exports.createNotificationOnComment = functions
 
 // firestore trigger, when user changes userImage the changes are filtered down to any comment user has made
 exports.onUserImageChange = functions
-  .region('europe-west1')
-  .firestore.document('/users/{userId}')
+  .region("europe-west1")
+  .firestore.document("/users/{userId}")
   .onUpdate((change) => {
     console.log(change.before.data());
     console.log(change.after.data());
     if (change.before.data().imageUrl !== change.after.data().imageUrl) {
-      console.log('image has changed');
+      console.log("image has changed");
       const batch = DB.batch();
-      return DB
-        .collection('screams')
-        .where('userHandle', '==', change.before.data().handle)
+      return DB.collection("screams")
+        .where("userHandle", "==", change.before.data().handle)
         .get()
         .then((data) => {
           data.forEach((doc) => {
             const scream = DB.doc(`/screams/${doc.id}`);
             batch.update(scream, {
-              userImage: change.after.data().imageUrl
+              userImage: change.after.data().imageUrl,
             });
           });
           return batch.commit();
@@ -149,31 +148,26 @@ exports.onUserImageChange = functions
   });
 
 exports.onScreamDelete = functions
-  .region('europe-west1')
-  .firestore.document('/screams/{screamId}')
+  .region("europe-west1")
+  .firestore.document("/screams/{screamId}")
   .onDelete((snapshot, context) => {
     const screamId = context.params.screamId;
     const batch = DB.batch();
-    return DB
-      .collection('comments')
-      .where('screamId', '==', screamId)
+    return DB.collection("comments")
+      .where("screamId", "==", screamId)
       .get()
       .then((data) => {
         data.forEach((doc) => {
           batch.delete(DB.doc(`/comments/${doc.id}`));
         });
-        return DB
-          .collection('likes')
-          .where('screamId', '==', screamId)
-          .get();
+        return DB.collection("likes").where("screamId", "==", screamId).get();
       })
       .then((data) => {
         data.forEach((doc) => {
           batch.delete(DB.doc(`/likes/${doc.id}`));
         });
-        return DB
-          .collection('notifications')
-          .where('screamId', '==', screamId)
+        return DB.collection("notifications")
+          .where("screamId", "==", screamId)
           .get();
       })
       .then((data) => {
