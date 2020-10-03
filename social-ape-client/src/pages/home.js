@@ -23,8 +23,8 @@ class home extends Component {
 
   render() {
     let recentScreamsMarkup = this.state.screams ? (
-      this.state.screams.map((scream, index) => (
-        <Scream scream={scream} key={index} />
+      this.state.screams.map((scream) => (
+        <Scream scream={scream} key={scream.screamId} />
       ))
     ) : (
       <p>Loading...</p>
