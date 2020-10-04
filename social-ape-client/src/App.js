@@ -1,13 +1,8 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route
-} from "react-router-dom";
-import {
-  ThemeProvider as MuiThemeProvider
-} from "@material-ui/core/styles";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { ThemeProvider as MuiThemeProvider } from "@material-ui/core/styles";
 import createMuiTHeme from "@material-ui/core/styles/createMuiTheme";
+import jwtDecode from "jwt-decode";
 
 // Pages
 import home from "./pages/home";
@@ -17,86 +12,53 @@ import signup from "./pages/signup";
 // Components
 import NavBar from "./components/Navbar";
 
+import AuthRoute from "./util/AuthRoute";
+import themeFile from "./util/theme";
 import "./App.css";
 
-const theme = createMuiTHeme({
-  palette: {
-    primary: {
-      light: "#33c9dc",
-      main: "#00bcd4",
-      dark: "#008394",
-      contrastText: "#fff",
-    },
-    secondary: {
-      light: "#ff6333",
-      main: "#ff3d00",
-      dark: "#b22a00",
-      contrastText: "#fff",
-    },
-  },
-  form: {
-    textAlign: "center",
-  },
-  image: {
-    margin: "20px auto 20px auto",
-  },
-  pageTitle: {
-    margin: "10px auto 10px auto",
-  },
-  textField: {
-    margin: "10px auto 10px auto",
-  },
-  button: {
-    marginBottom: 10,
-    marginTop: 20,
-    position: "relative",
-  },
-  customError: {
-    color: "red",
-    fontSize: "0.8rem",
-    marginTop: 10,
-  },
-  progress: {
-    position: "absolute",
-  },
-});
+const theme = createMuiTHeme(themeFile);
+
+let authenticated;
+const token = localStorage.FBIdToken;
+
+if (token) {
+  const decodedToken = jwtDecode(token);
+
+  // checking if token has expired
+  if (decodedToken.exp * 1000 < Date.now()) {
+    window.Location.href = "/login";
+    authenticated = false;
+  } else {
+    authenticated = true;
+  }
+}
 
 function App() {
-  return ( <
-    MuiThemeProvider theme = {
-      theme
-    } >
-    <
-    div className = "App" >
-    <
-    Router >
-    <
-    NavBar / >
-    <
-    div className = "container" >
-    <
-    Switch >
-    <
-    Route path = "/"
-    exact component = {
-      home
-    }
-    /> <
-    Route path = "/login"
-    exact component = {
-      login
-    }
-    /> <
-    Route path = "/signup"
-    exact component = {
-      signup
-    }
-    /> <
-    /Switch> <
-    /div> <
-    /Router> <
-    /div> <
-    /MuiThemeProvider>
+  return (
+    <MuiThemeProvider theme={theme}>
+      <div className="App">
+        <Router>
+          <NavBar />
+          <div className="container">
+            <Switch>
+              <Route path="/" exact component={home} />
+              <AuthRoute
+                path="/login"
+                exact
+                component={login}
+                auhenticated={authenticated}
+              />
+              <AuthRoute
+                path="/signup"
+                exact
+                component={signup}
+                auhenticated={authenticated}
+              />
+            </Switch>
+          </div>
+        </Router>
+      </div>
+    </MuiThemeProvider>
   );
 }
 

@@ -15,7 +15,7 @@ import AppIcon from "../images/icon.png";
 
 // accessing the global styles
 const styles = (theme) => ({
-  ...theme,
+  ...theme.spreadThis,
 });
 
 class signup extends Component {
