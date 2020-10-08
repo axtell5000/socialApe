@@ -9,8 +9,6 @@ import Button from "@material-ui/core/Button";
 import MuiLink from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
 
 // Material Icons goodies
 import LocationOn from "@material-ui/icons/LocationOn";
@@ -24,6 +22,7 @@ import { connect } from "react-redux";
 import { logoutUser, uploadImage } from "../redux/actions/userActions";
 
 import EditDetails from "./EditDetails";
+import AppButton from "../util/AppButton";
 
 const styles = (theme) => ({
   invisibleSeparator: {
@@ -125,14 +124,13 @@ class Profile extends Component {
                 hidden="hidden"
                 onChange={this.handleImageChange}
               />
-              <Tooltip title="Edit profile image" placement="top">
-                <IconButton
-                  onClick={this.handleEditPicture}
-                  className={classes.buttons}
-                >
-                  <EditIcon color="primary" />
-                </IconButton>
-              </Tooltip>
+              <AppButton
+                tip="Edit profile picture"
+                onClick={this.handleEditPicture}
+                btnClassName="button"
+              >
+                <EditIcon color="primary" />
+              </AppButton>
             </div>
             <hr />
             <div className="profile-details">
@@ -166,11 +164,9 @@ class Profile extends Component {
               <CalendarToday color="primary" />{" "}
               <span>Joined {dayjs(createdAt).format("MMM YYYY")}</span>
             </div>
-            <Tooltip title="Logout" placement="top">
-              <IconButton onClick={this.handleLogout}>
-                <KeyboardReturn color="primary" />
-              </IconButton>
-            </Tooltip>
+            <AppButton tip="Logout" onClick={this.handleLogout}>
+              <KeyboardReturn color="primary" />
+            </AppButton>
             <EditDetails />
           </div>
         </Paper>
