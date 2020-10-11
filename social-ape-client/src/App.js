@@ -28,6 +28,9 @@ import "./App.css";
 
 const theme = createMuiTHeme(themeFile);
 
+// axios.defaults.baseURL =
+//   "https://europe-west1-socialape-89327.cloudfunctions.net/api";
+
 const token = localStorage.FBIdToken;
 
 if (token) {

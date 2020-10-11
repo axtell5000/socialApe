@@ -52,7 +52,7 @@ class signup extends Component {
       handle: this.state.handle,
     };
 
-    this.props.logoutUser(newUserData, this.props.history);
+    this.props.signupUser(newUserData, this.props.history);
   };
 
   handleChange = (event) => {
