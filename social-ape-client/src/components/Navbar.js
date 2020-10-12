@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
+import PostScream from "./PostScream";
 import AppButton from "../util/AppButton";
 
 // MUI stuff - more effecient doing it like this
@@ -11,7 +12,6 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 
 // MUI Icons
-import AddIcon from "@material-ui/icons/Add";
 import HomeIcon from "@material-ui/icons/Home";
 import Notifications from "@material-ui/icons/Notifications";
 
@@ -23,9 +23,7 @@ class Navbar extends Component {
         <Toolbar className="nav-container">
           {authenticated ? (
             <Fragment>
-              <AppButton tip="Post a scream!">
-                <AddIcon color="primary" />
-              </AppButton>
+              <PostScream />
               <Link to="/">
                 <AppButton tip="Home">
                   <HomeIcon />

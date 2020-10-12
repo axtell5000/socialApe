@@ -1,5 +1,6 @@
 import {
   SET_SCREAMS,
+  POST_SCREAM,
   LIKE_SCREAM,
   UNLIKE_SCREAM,
   LOADING_DATA,
@@ -41,12 +42,18 @@ export default function (state = initialState, action) {
       };
 
     case DELETE_SCREAM:
-      index = state.screams.findIndex(
+      let index2 = state.screams.findIndex(
         (scream) => scream.screamId === action.payload
       );
-      state.screams.splice(index, 1);
+      state.screams.splice(index2, 1);
       return {
         ...state
+      };
+
+    case POST_SCREAM:
+      return {
+        ...state,
+        screams: [action.payload, ...state.screams]
       };
 
     default:
