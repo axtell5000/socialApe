@@ -1,10 +1,11 @@
-import React, {Component} from "react";
-import {Link} from "react-router-dom";
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import PropTypes from "prop-types";
 
 import AppButton from "../util/AppButton";
+import DeleteScream from "./DeleteScream";
 
 // For MUI
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -18,26 +19,32 @@ import ChatIcon from "@material-ui/icons/Chat";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
 // Redux
-import {connect} from "react-redux";
-import {likeScream, unlikeScream} from "../redux/actions/dataActions";
+import { connect } from "react-redux";
+import { likeScream, unlikeScream } from "../redux/actions/dataActions";
 
 const styles = {
   card: {
     display: "flex",
-    marginBottom: 20
+    marginBottom: 20,
+    position: "relative",
   },
   image: {
-    minWidth: 200
+    minWidth: 200,
   },
   content: {
     padding: 20,
-    objectFit: "cover"
-  }
+    objectFit: "cover",
+  },
 };
 
 class Scream extends Component {
   likedScream = () => {
-    if (this.props.user.likes && this.props.user.likes.find((like) => like.screamId === this.props.screamId)) {
+    if (
+      this.props.user.likes &&
+      this.props.user.likes.find(
+        (like) => like.screamId === this.props.screamId
+      )
+    ) {
       return true;
     } else {
       return false;
@@ -45,15 +52,11 @@ class Scream extends Component {
   };
 
   likeScream = () => {
-    console.log(this.props.scream.screamId, 'yoyoy');
-    this
-      .props
-      .likeScream(this.props.scream.screamId);
+    console.log(this.props.scream.screamId, "yoyoy");
+    this.props.likeScream(this.props.scream.screamId);
   };
   unlikeScream = () => {
-    this
-      .props
-      .unlikeScream(this.props.screamId);
+    this.props.unlikeScream(this.props.scream.screamId);
   };
 
   render() {
@@ -67,50 +70,58 @@ class Scream extends Component {
         createdAt,
         screamId,
         likeCount,
-        commentCount
+        commentCount,
       },
       user: {
-        authenticated
-      }
+        authenticated,
+        credentials: { handle },
+      },
     } = this.props;
 
-    const likesButton = !authenticated
-      ? (
-        <AppButton tip="Like">
-          <Link to="/login">
-            <FavoriteBorder color="primary"/>
-          </Link>
-        </AppButton>
-      )
-      : this.likedScream()
-        ? (
-          <AppButton tip="Undo like" onClick={this.unlikeScream}>
-            <FavoriteIcon color="primary"/>
-          </AppButton>
-        )
-        : (
-          <AppButton tip="Like" onClick={this.likeScream}>
-            <FavoriteBorder color="primary"/>
-          </AppButton>
-        );
+    const likesButton = !authenticated ? (
+      <AppButton tip="Like">
+        <Link to="/login">
+          <FavoriteBorder color="primary" />
+        </Link>
+      </AppButton>
+    ) : this.likedScream() ? (
+      <AppButton tip="Undo like" onClick={this.unlikeScream}>
+        <FavoriteIcon color="primary" />
+      </AppButton>
+    ) : (
+      <AppButton tip="Like" onClick={this.likeScream}>
+        <FavoriteBorder color="primary" />
+      </AppButton>
+    );
+
+    const deleteButton =
+      authenticated && userHandle === handle ? (
+        <DeleteScream screamId={screamId} />
+      ) : null;
 
     return (
       <Card className={classes.card}>
-        <CardMedia image={userImage} title="Profile image" className={classes.image}/>
+        <CardMedia
+          image={userImage}
+          title="Profile image"
+          className={classes.image}
+        />
         <CardContent className={classes.content}>
           <Typography
             variant="h5"
             component={Link}
             to={`/users/${userHandle}`}
-            color="primary">
+            color="primary"
+          >
             {userHandle}
           </Typography>
+          {deleteButton}
           <Typography variant="body2">{dayjs(createdAt).fromNow()}</Typography>
           <Typography variant="body1">{body}</Typography>
           {likesButton}
           <span>{likeCount}Likes</span>
           <AppButton tip="comments">
-            <ChatIcon color="primary"/>
+            <ChatIcon color="primary" />
           </AppButton>
           <span>{commentCount}comments</span>
         </CardContent>
@@ -124,14 +135,17 @@ Scream.propTypes = {
   unlikeScream: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
   scream: PropTypes.object.isRequired,
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = (state) => ({user: state.user});
+const mapStateToProps = (state) => ({ user: state.user });
 
 const mapActionsToProps = {
   likeScream,
-  unlikeScream
+  unlikeScream,
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(withStyles(styles)(Scream));
+export default connect(
+  mapStateToProps,
+  mapActionsToProps
+)(withStyles(styles)(Scream));
