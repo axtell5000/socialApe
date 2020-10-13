@@ -2,8 +2,10 @@ import axios from "axios";
 
 import {
   SET_SCREAMS,
+  SET_SCREAM,
   LOADING_DATA,
   LOADING_UI,
+  STOP_LOADING_UI,
   LIKE_SCREAM,
   UNLIKE_SCREAM,
   DELETE_SCREAM,
@@ -31,6 +33,21 @@ export const getScreams = () => (dispatch) => {
         payload: [],
       });
     });
+};
+
+// Get a single scream
+export const getScream = (screamId) => (dispatch) => {
+  dispatch({ type: LOADING_UI });
+  axios
+    .get(`/scream/${screamId}`)
+    .then((res) => {
+      dispatch({
+        type: SET_SCREAM,
+        payload: res.data,
+      });
+      dispatch({ type: STOP_LOADING_UI });
+    })
+    .catch((err) => console.log(err));
 };
 
 // Like a scream

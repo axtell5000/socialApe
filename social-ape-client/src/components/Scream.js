@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 
 import AppButton from "../util/AppButton";
 import DeleteScream from "./DeleteScream";
+import ScreamDialog from "./ScreamDialog";
 
 // For MUI
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -124,6 +125,7 @@ class Scream extends Component {
             <ChatIcon color="primary" />
           </AppButton>
           <span>{commentCount}comments</span>
+          <ScreamDialog screamId={screamId} userHandle={userHandle} />
         </CardContent>
       </Card>
     );
