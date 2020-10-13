@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import PropTypes from "prop-types";
 
-import AppButton from "../util/AppButton";
+import AppButton from "../../util/AppButton";
 import DeleteScream from "./DeleteScream";
 import ScreamDialog from "./ScreamDialog";
 import LikeButton from "./LikeButton";

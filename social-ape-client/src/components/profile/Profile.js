@@ -19,10 +19,10 @@ import KeyboardReturn from "@material-ui/icons/KeyboardReturn";
 
 //Redux
 import { connect } from "react-redux";
-import { logoutUser, uploadImage } from "../redux/actions/userActions";
+import { logoutUser, uploadImage } from "../../redux/actions/userActions";
 
 import EditDetails from "./EditDetails";
-import AppButton from "../util/AppButton";
+import AppButton from "../../util/AppButton";
 
 const styles = (theme) => ({
   invisibleSeparator: {

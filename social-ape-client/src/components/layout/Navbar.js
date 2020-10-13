@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
-import PostScream from "./PostScream";
-import AppButton from "../util/AppButton";
+import PostScream from "../scream/PostScream";
+import AppButton from "../../util/AppButton";
 
 // MUI stuff - more effecient doing it like this
 import AppBar from "@material-ui/core/AppBar";

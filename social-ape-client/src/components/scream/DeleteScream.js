@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
-import AppButton from "../util/AppButton";
+import AppButton from "../../util/AppButton";
 
 // MUI goodies
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -14,7 +14,7 @@ import DeleteOutline from "@material-ui/icons/DeleteOutline";
 
 // Redux
 import { connect } from "react-redux";
-import { deleteScream } from "../redux/actions/dataActions";
+import { deleteScream } from "../../redux/actions/dataActions";
 
 const styles = {
   deleteButton: {

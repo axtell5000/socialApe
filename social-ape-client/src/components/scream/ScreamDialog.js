@@ -18,9 +18,9 @@ import ChatIcon from "@material-ui/icons/Chat";
 
 // Redux stuff
 import { connect } from "react-redux";
-import { getScream, clearErrors } from "../redux/actions/dataActions";
+import { getScream, clearErrors } from "../../redux/actions/dataActions";
 
-import AppButton from "../util/AppButton";
+import AppButton from "../../util/AppButton";
 import LikeButton from "./LikeButton";
 
 const styles = (theme) => ({

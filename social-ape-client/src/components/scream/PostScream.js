@@ -16,9 +16,9 @@ import CloseIcon from "@material-ui/icons/Close";
 
 // Redux
 import { connect } from "react-redux";
-import { postScream, clearErrors } from "../redux/actions/dataActions";
+import { postScream, clearErrors } from "../../redux/actions/dataActions";
 
-import AppButton from "../util/AppButton";
+import AppButton from "../../util/AppButton";
 
 const styles = (theme) => ({
   ...theme.spreadThis,

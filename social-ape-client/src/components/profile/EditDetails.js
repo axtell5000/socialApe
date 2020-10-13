@@ -1,11 +1,11 @@
 import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 
-import AppButton from "../util/AppButton";
+import AppButton from "../../util/AppButton";
 
 // Redux stuff
 import { connect } from "react-redux";
-import { editUserDetails } from "../redux/actions/userActions";
+import { editUserDetails } from "../../redux/actions/userActions";
 
 // Mui goodies
 import withStyles from "@material-ui/core/styles/withStyles";
