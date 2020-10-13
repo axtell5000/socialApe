@@ -21,6 +21,7 @@ import { connect } from "react-redux";
 import { getScream, clearErrors } from "../redux/actions/dataActions";
 
 import AppButton from "../util/AppButton";
+import LikeButton from "./LikeButton";
 
 const styles = (theme) => ({
   ...theme.spreadThis,
@@ -101,7 +102,7 @@ class ScreamDialog extends Component {
         <CircularProgress size={200} thickness={2} />
       </div>
     ) : (
-      <Grid container spacing={16}>
+      <Grid container spacing={5}>
         <Grid item sm={5}>
           <img src={userImage} alt="Profile" className={classes.profileImage} />
         </Grid>
@@ -120,7 +121,7 @@ class ScreamDialog extends Component {
           </Typography>
           <hr className={classes.invisibleSeparator} />
           <Typography variant="body1">{body}</Typography>
-
+          <LikeButton screamId={screamId} />
           <span>{likeCount} likes</span>
           <AppButton tip="comments">
             <ChatIcon color="primary" />
