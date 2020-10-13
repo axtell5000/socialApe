@@ -23,6 +23,7 @@ import { getScream, clearErrors } from "../../redux/actions/dataActions";
 import AppButton from "../../util/AppButton";
 import LikeButton from "./LikeButton";
 import Comments from "./Comments";
+import CommentForm from "./CommentForm";
 
 const styles = (theme) => ({
   ...theme.spreadThis,
@@ -79,7 +80,7 @@ class ScreamDialog extends Component {
   handleClose = () => {
     // window.history.pushState(null, null, this.state.oldPath);
     this.setState({ open: false });
-    // this.props.clearErrors();
+    this.props.clearErrors();
   };
 
   render() {
@@ -130,6 +131,7 @@ class ScreamDialog extends Component {
           <span>{commentCount} comments</span>
         </Grid>
         <hr className={classes.visibleSeparator} />
+        <CommentForm screamId={screamId} />
         <Comments comments={comments} />
       </Grid>
     );
