@@ -22,6 +22,7 @@ import { getScream, clearErrors } from "../../redux/actions/dataActions";
 
 import AppButton from "../../util/AppButton";
 import LikeButton from "./LikeButton";
+import Comments from "./Comments";
 
 const styles = (theme) => ({
   ...theme.spreadThis,
@@ -128,6 +129,8 @@ class ScreamDialog extends Component {
           </AppButton>
           <span>{commentCount} comments</span>
         </Grid>
+        <hr className={classes.visibleSeparator} />
+        <Comments comments={comments} />
       </Grid>
     );
     return (
