@@ -167,7 +167,7 @@ class ScreamDialog extends Component {
 }
 
 ScreamDialog.propTypes = {
-  //clearErrors: PropTypes.func.isRequired,
+  clearErrors: PropTypes.func.isRequired,
   getScream: PropTypes.func.isRequired,
   screamId: PropTypes.string.isRequired,
   userHandle: PropTypes.string.isRequired,
@@ -182,7 +182,7 @@ const mapStateToProps = (state) => ({
 
 const mapActionsToProps = {
   getScream,
-  // clearErrors,
+  clearErrors,
 };
 
 export default connect(
