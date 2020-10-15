@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 
 import PostScream from "../scream/PostScream";
 import AppButton from "../../util/AppButton";
+import Notifications from './Notifications';
 
 // MUI stuff - more effecient doing it like this
 import AppBar from "@material-ui/core/AppBar";
@@ -13,7 +14,6 @@ import Button from "@material-ui/core/Button";
 
 // MUI Icons
 import HomeIcon from "@material-ui/icons/Home";
-import Notifications from "@material-ui/icons/Notifications";
 
 class Navbar extends Component {
   render() {
@@ -29,9 +29,8 @@ class Navbar extends Component {
                   <HomeIcon />
                 </AppButton>
               </Link>
-              <AppButton tip="Notifications">
-                <Notifications color="primary" />
-              </AppButton>
+              <Notifications />
+              
             </Fragment>
           ) : (
             <Fragment>
